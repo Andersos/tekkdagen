@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<head>
+    <title>Filter the Finnbox!</title>
+    <link rel="stylesheet" href="http://finncdn.no/bb/latest/css/so/so.min.css" />
+    <script src="checkboxes.js"></script>
+</head>
+<body class="pam">
+
+	<div class="pam mvm bg-white">
+        <h1 class="h2 slightlylargertext strong">Oppgave: Velg alle / velg ingen</h1>
+        <p>Skriv kode slik at knappene fungerer slik:</p>
+        <ul class="bullets pll">
+            <li>Når man trykker "Velg alle", blir alle checkboxes krysset av</li>
+            <li>Når man trykker "Velg ingen", blir alle kryss fjernet</li>
+            <li>Når alle checboxes er krysset av er "Velg alle" disabled</li>
+            <li>Når ingen checboxes er krysset av er "Velg ingen" disabled</li>
+            <li>Status på knappene oppdateres også når man krysser av én og én checkbox</li>
+            <li>Det er tre sett med checkboxes og knapper. Skriv koden som en gjenbrukbar komponent som initialiseres én gang for hvert sett.</li>
+        </ul>
+        
+    </div>
+
+    <div class="line bg-white">
+    	<div class="unit pal mvm bg-white" id="list1">
+	    	<button data-action="selectall">Velg alle</button>
+	    	<button data-action="selectnone">Velg ingen</button>
+	    	<div class="pam">
+	    		<label><input type="checkbox"> Uno</label>
+	    		<label><input type="checkbox"> Dos</label>
+	    		<label><input type="checkbox"> Tres</label>
+	    		<label><input type="checkbox"> Cuatro</label>
+	    		<label><input type="checkbox"> Cinco</label>
+	    		<label><input type="checkbox"> Seis</label>
+	    	</div>
+	    </div>
+	    <div class="unit pal mvm bg-white" id="list2">
+	    	<button data-action="selectall">Velg alle</button>
+	    	<button data-action="selectnone">Velg ingen</button>
+	    	<div class="pam">
+	    		<label><input type="checkbox"> One</label>
+	    		<label><input type="checkbox"> Two</label>
+	    		<label><input type="checkbox"> Three</label>
+	    		<label><input type="checkbox"> Four</label>
+	    		<label><input type="checkbox"> Five</label>
+	    		<label><input type="checkbox"> Six</label>
+	    	</div>
+	    </div>
+	    <div class="unit pal mvm bg-white" id="list3">
+	    	<button data-action="selectall">Velg alle</button>
+	    	<button data-action="selectnone">Velg ingen</button>
+	    	<div class="pam">
+	    		<label><input type="checkbox"> Ein</label>
+	    		<label><input type="checkbox"> Zwei</label>
+	    		<label><input type="checkbox"> Drei</label>
+	    		<label><input type="checkbox"> Vier</label>
+	    		<label><input type="checkbox"> Fünf</label>
+	    		<label><input type="checkbox"> Sechs</label>
+	    	</div>
+	    </div>
+    </div>
+    
+</body>

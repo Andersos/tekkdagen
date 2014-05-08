@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<head>
+    <title>Filter the Finnbox!</title>
+    <link rel="stylesheet" href="http://finncdn.no/bb/latest/css/so/so.min.css" />
+    <link rel="stylesheet" href="finnbox.css" />
+    <script src="finnbox-filter.js"></script>
+</head>
+<body class="pam">
+
+    <div class="pam mvm bg-white">
+        <h1 class="h2 slightlylargertext strong">Oppgave: Søk i meldinger på klientsiden</h1>
+        <p>Skriv kode i finnbox-filter.js slik at brukeren kan filtrere sine meldinger ved å skrive i søkeboksen:</p>
+        <ul class="bullets pll">
+            <li>Samtaler med treff ekspanderes (class 'open'), de andre skjules (class 'hidden')</li>
+            <li>Filtreringen oppdateres for hvert tegn som skrives i søkefeltet</li>
+            <li>Treff markeres i teksten</li>
+        </ul>
+        <h2 class="h3 mtl">Hovedstruktur i HTML'en</h2>
+        <p>(Det finnes mange flere elementer innimellom disse, men dette er de viktigste)
+<pre class="mtn">
+&lt;ol&gt;
+  &lt;li data-finnbox-component="conversation"&gt; (legg til en class="open" på denne for å ekspandere en samtale)
+    &lt;div data-finnbox-element="conversationheader"&gt;
+      &lt;span data-finnbox-element="conversationcontent"&gt;
+    &lt;div data-finnbox-element="messages"&gt;
+      &lt;ol&gt;
+        &lt;li data-finnbox-element="message"&gt;
+          &lt;span data-finnbox-element="messagecontent"&gt;
+</pre>
+        </p>
+        <h2 class="h3 mtl">Disclaimer :)</h2>
+        <p>I praksis er det lite sannsynlig at vi ville implementert filtrering på klientsiden, men dette er en
+            bra måte å få øvd seg på DOM-manipulering og samtidig bli bedre kjent med finnbox-koden.</p>
+    </div>
+
+    <div class="pam pvl mvm mtl bg-white centerify">
+        <input type="text" placeholder="Søk i meldingene" class="span6" />
+    </div>
+
+    <ol class="man">
+    <li data-finnbox-reply-to-message="jothABs3iVwsK3OSyU2ZjJNUTZlzlFJAXusINZWOsruDcVrtHtVwsQ2aXuL6SaVtuDICZwqPAvZ3qc-N52u4lB7aTNDTESSHNDmLFeUqZ-FI_E6jEh-iRER7AoYfR33r" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <a data-finnbox-element="profile" href="http://dev.finn.no/smajobber/profiler/2095810518/" class="hidden"><img src="http://dev.finn.no/smajobber/img/smajobber/profile/profileplaceholder_tumb.png" alt="Profilbilde av " class="man finnbox-profile-image"></a>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1395907561000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Karl-Erik Rønsen</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-2">2</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            
+                            Så bra! Har du lang rake-erfaring?</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Karl-Erik Rønsen</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Karl-Erik Rønsen</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-2">2</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            
+                            Så bra! Har du lang rake-erfaring?</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-Rrx_fHvGkjgmHcURH9XUMVisOmn99gbib0ca7dxJyufWm0GdZFokRyVjIFzMLc_1s3NfvhLJfOSO6e9fDyyueRttRFGJnaIfSiK34lfM0R87e-mmgoDv1LZfRQozvuUf" data-finnbox-message-id="Rrx_fHvGkjgmHcURH9XUMVisOmn99gbib0ca7dxJyufWm0GdZFokRyVjIFzMLc_1s3NfvhLJfOSO6e9fDyyueRttRFGJnaIfSiK34lfM0R87e-mmgoDv1LZfRQozvuUf" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg liker å rake. Veldig godt!</div>
+                <div data-finnbox-date="1395758983000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-jothABs3iVwsK3OSyU2ZjJNUTZlzlFJAXusINZWOsruDcVrtHtVwsQ2aXuL6SaVtuDICZwqPAvZ3qc-N52u4lB7aTNDTESSHNDmLFeUqZ-FI_E6jEh-iRER7AoYfR33r" data-finnbox-message-id="jothABs3iVwsK3OSyU2ZjJNUTZlzlFJAXusINZWOsruDcVrtHtVwsQ2aXuL6SaVtuDICZwqPAvZ3qc-N52u4lB7aTNDTESSHNDmLFeUqZ-FI_E6jEh-iRER7AoYfR33r" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <a data-finnbox-element="profile" href="http://dev.finn.no/smajobber/profiler/2095810518/" class="hidden"><img src="http://dev.finn.no/smajobber/img/smajobber/profile/profileplaceholder_tumb.png" alt="Profilbilde av Karl-Erik Rønsen" class="man finnbox-profile-image"></a>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Karl-Erik Rønsen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Så bra! Har du lang rake-erfaring?</div>
+                <div data-finnbox-date="1395907561000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="jothABs3iVwsK3OSyU2ZjJNUTZlzlFJAXusINZWOsruDcVrtHtVwsQ2aXuL6SaVtuDICZwqPAvZ3qc-N52u4lB7aTNDTESSHNDmLFeUqZ-FI_E6jEh-iRER7AoYfR33r" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="bsQENAVHhH2ESPRpusXrufXP3nv4PU4bRniI6yTB1gTyRwVfVgvcq453vJXNJQcBHTumltiaxFaeQBMEolQKFC2RcLhymD3s289FFxZ264A" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1395234806000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Kamilla</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-6">6</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Hei K, beklager kompis, den er solgt.</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Kamilla</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Kamilla</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-6">6</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Hei K, beklager kompis, den er solgt.</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show" style="">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-i7ppEkx0FY2E07d9-ZWiYMiQlmsV7ziPLGbBdxgecBdSTOsYF1ngaif0vQ-EjZZi8Cqov_QUeG4M2tjACFgZINvQlTazG_yuUpgmHnLyKTE" data-finnbox-message-id="i7ppEkx0FY2E07d9-ZWiYMiQlmsV7ziPLGbBdxgecBdSTOsYF1ngaif0vQ-EjZZi8Cqov_QUeG4M2tjACFgZINvQlTazG_yuUpgmHnLyKTE" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Kamilla</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hei! Jeg vil gjerne kjøpe stolen du selger. Jeg bor ved Lørenskog stasjon, så er ikke lange veien for meg å hente den. Mvh Kamilla Foldvik. Hilsen Kamilla</div>
+                <div data-finnbox-date="1394785384000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-Q_b-JeKoF8POe0KoPN9tz5pWUILeWo8YroqP3UxifIRR6IHk5xxbG865rMATubwoPUFiEZOk88cRX377eDZuALfMgBWH85wOgRstvtHUd1E" data-finnbox-message-id="Q_b-JeKoF8POe0KoPN9tz5pWUILeWo8YroqP3UxifIRR6IHk5xxbG865rMATubwoPUFiEZOk88cRX377eDZuALfMgBWH85wOgRstvtHUd1E" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Det kan vi ordne Kamilla. Du kan komme og hente den i løpet av helgen.</div>
+                <div data-finnbox-date="1394788748000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-zp6DD1aBsePCL465gDHSoO-oYyhJVXKI-v0y-VCfFkwgQ6B2wSbpt9QxufpNL4krRfh6TJEjO-wWHL8VJGa-fewnw0jv6ZFsBA5s7EcByZ0" data-finnbox-message-id="zp6DD1aBsePCL465gDHSoO-oYyhJVXKI-v0y-VCfFkwgQ6B2wSbpt9QxufpNL4krRfh6TJEjO-wWHL8VJGa-fewnw0jv6ZFsBA5s7EcByZ0" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Kamilla</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Er stolen slitt?</div>
+                <div data-finnbox-date="1394788895000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-TM6ZgLJq82emKSIjBWtJPDH_kw4wtfbq3BF_yvu5fR_BYlPlDAbPvzCOvKd8nC-GA8MY1qsH1VrR54fckjVxFsMKXUILJmUg_whwv_D5hLY" data-finnbox-message-id="TM6ZgLJq82emKSIjBWtJPDH_kw4wtfbq3BF_yvu5fR_BYlPlDAbPvzCOvKd8nC-GA8MY1qsH1VrR54fckjVxFsMKXUILJmUg_whwv_D5hLY" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Trekket er litt slitt. Det var sølt kaffe på venstre armlene men det er vel det eneste. Du ser flekken på bilde. Det er mulig å bytte trekket på stolen om du har lyst på en annen farge.</div>
+                <div data-finnbox-date="1394788922000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-bsQENAVHhH2ESPRpusXrufXP3nv4PU4bRniI6yTB1gTyRwVfVgvcq453vJXNJQcBHTumltiaxFaeQBMEolQKFC2RcLhymD3s289FFxZ264A" data-finnbox-message-id="bsQENAVHhH2ESPRpusXrufXP3nv4PU4bRniI6yTB1gTyRwVfVgvcq453vJXNJQcBHTumltiaxFaeQBMEolQKFC2RcLhymD3s289FFxZ264A" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Kamilla</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Skal vi si 400 da?</div>
+                <div data-finnbox-date="1394789256000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-_-36N6tpDlQKGEYgnnk3izheW0czzcMyW6iNLTSbDh1CTJoKUJtxyncIJb1yUb-lJjkEwa-32fszpQrSsi86NQpq-AsilWsNpvYGdyQhkkU" data-finnbox-message-id="_-36N6tpDlQKGEYgnnk3izheW0czzcMyW6iNLTSbDh1CTJoKUJtxyncIJb1yUb-lJjkEwa-32fszpQrSsi86NQpq-AsilWsNpvYGdyQhkkU" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hei K, beklager kompis, den er solgt.</div>
+                <div data-finnbox-date="1395234806000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="bsQENAVHhH2ESPRpusXrufXP3nv4PU4bRniI6yTB1gTyRwVfVgvcq453vJXNJQcBHTumltiaxFaeQBMEolQKFC2RcLhymD3s289FFxZ264A" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="tgYlByY8OU5mdVmtYkR1uHGNYSyM16-XhvkNPUuA6zHbtGE5amqNXpAXKVZ2k2w3kA9llqBe-CofpfaXuAp-fXr8JujkvQvbFeiHR7vksr8" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1395231883000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Stine</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-13">13</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Greit, da er vi enige! solgt!</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Stine</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Stine</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-13">13</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Greit, da er vi enige! solgt!</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show" style="">
+            <div data-finnbox-element="showallmessages" class="line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount">(3)</span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-XzreZECtKCUlNWWUXZqQ-clOP7JnP-pgLhJM87HAtFEHzT2_6ZR-fYR7WeCgeZnabinNh4l9bRDYoWz6XxXke4JhPmGVAqHy6PBzfxYjFlM" data-finnbox-message-id="XzreZECtKCUlNWWUXZqQ-clOP7JnP-pgLhJM87HAtFEHzT2_6ZR-fYR7WeCgeZnabinNh4l9bRDYoWz6XxXke4JhPmGVAqHy6PBzfxYjFlM" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll hidden">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hei! Er lenestolen fortsatt til salgs? Og kan den bringes? Hilsen Stine</div>
+                <div data-finnbox-date="1394784906000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-E0Qznk8LMAcSgs6aGOkAgW-c0S5Ygo5zhTxekotinD9qy2cMJhD2wMowyKL7xtlGg7dtnPD1kZLFP9dyqH8TZ_jOaqiDCFtgCe0-PF7zEQY" data-finnbox-message-id="E0Qznk8LMAcSgs6aGOkAgW-c0S5Ygo5zhTxekotinD9qy2cMJhD2wMowyKL7xtlGg7dtnPD1kZLFP9dyqH8TZ_jOaqiDCFtgCe0-PF7zEQY" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll hidden">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hei, 
+    Ja stolen er fortsatt til salgs. 
+    I dag og på lørdag har jeg tilgang til bil så da kan det være mulig å bringe stolen om det er nødvendig.</div>
+                <div data-finnbox-date="1394785264000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message--Nu-Axb3ZZkPcmzrb_nHCtIyn8TsLZSBXtOUhF-SpJWWvsnQN9knJbAqEpdoIenWqz7b5rV5y0XDuLTApPGFV6LmlyHTG00rILrOvm-18tk" data-finnbox-message-id="-Nu-Axb3ZZkPcmzrb_nHCtIyn8TsLZSBXtOUhF-SpJWWvsnQN9knJbAqEpdoIenWqz7b5rV5y0XDuLTApPGFV6LmlyHTG00rILrOvm-18tk" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll hidden">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Det hadde vært veldig fint, men jeg har ikke mulighet til å betale før neste lønning som er 20. mars. Vil du vente med å levere stolen til da, eller går det bra om jeg overfører per konto?</div>
+                <div data-finnbox-date="1394785536000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-d_WC1VTEI7QayN3ZaI4Oo9DLec-zU2AaNMNC-5s4KhScf7YDd4prOV0u51ynrUWfg98MxuGaoHc7a46RTOQAMLAJ8Ada4jHcGqdl6vnBgz4" data-finnbox-message-id="d_WC1VTEI7QayN3ZaI4Oo9DLec-zU2AaNMNC-5s4KhScf7YDd4prOV0u51ynrUWfg98MxuGaoHc7a46RTOQAMLAJ8Ada4jHcGqdl6vnBgz4" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hmm, hvor bor du?</div>
+                <div data-finnbox-date="1394785619000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-xo3opu-68ZU9tqcUg-_CjB0EufV5eFneztrSn2uYIq9IFNs6W2rsOxy1XDJiBHxRekV8BFFYO1OYzJMnreSN8A9fg9eqpSXte9nKfydAh8Q" data-finnbox-message-id="xo3opu-68ZU9tqcUg-_CjB0EufV5eFneztrSn2uYIq9IFNs6W2rsOxy1XDJiBHxRekV8BFFYO1OYzJMnreSN8A9fg9eqpSXte9nKfydAh8Q" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg bor i Lillestrøm sentrum.</div>
+                <div data-finnbox-date="1394785711000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-B0E9xIbbbud1PF5A-J04Vd5tKF3CqIWr2Lv6ZA3_tbMy984INpZLWsIt2z26eTYhKiDE2vMxE_kWLMPOI6Su0kJ18hnHJLHxksag4Ds8_98" data-finnbox-message-id="B0E9xIbbbud1PF5A-J04Vd5tKF3CqIWr2Lv6ZA3_tbMy984INpZLWsIt2z26eTYhKiDE2vMxE_kWLMPOI6Su0kJ18hnHJLHxksag4Ds8_98" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg har desverre ikke mulighet til å hente selv, da jeg ikke har bil her. 
+     
+    Sendt fra min iPhone</div>
+                <div data-finnbox-date="1394785737000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-q7BG750njFZaae2A6D7tICuGpb6gbV8GxBJAXi6ly62H1UPOPOZb9P-66s9-9ekaBL69gNesVFdcRE1mEi1BvOeztyuRKA9zzTXEYqg5sYQ" data-finnbox-message-id="q7BG750njFZaae2A6D7tICuGpb6gbV8GxBJAXi6ly62H1UPOPOZb9P-66s9-9ekaBL69gNesVFdcRE1mEi1BvOeztyuRKA9zzTXEYqg5sYQ" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hvis du leverer på lørdag har jeg kontanter til deg! 
+     
+    Sendt fra min iPhone</div>
+                <div data-finnbox-date="1394785798000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-pdKYzDuqLsxuZT5lC4bB4L4yYu7vwOepqjmiTaQs1dm5ZkGYA8q-nXhx_z_p8kFS5_oyg3fLYY_p9wdK-iJaLrVqojf6VRE97VmG94grpHs" data-finnbox-message-id="pdKYzDuqLsxuZT5lC4bB4L4yYu7vwOepqjmiTaQs1dm5ZkGYA8q-nXhx_z_p8kFS5_oyg3fLYY_p9wdK-iJaLrVqojf6VRE97VmG94grpHs" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg er opptatt store deler av lørdagen. Men jeg kan levere den etter jobb på mandag. Høres 600 med levering greit ut?</div>
+                <div data-finnbox-date="1394785988000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-crteuBeSe-e2q51zBzvW_FdEbslybc4r71yON4Mqcnx-T7oSO-6rckw1YaqT2pOxx8nW3QsOkZ5Ixqsrh3YfIMVQ1x1hLoVC1jsN1Dxfd5Q" data-finnbox-message-id="crteuBeSe-e2q51zBzvW_FdEbslybc4r71yON4Mqcnx-T7oSO-6rckw1YaqT2pOxx8nW3QsOkZ5Ixqsrh3YfIMVQ1x1hLoVC1jsN1Dxfd5Q" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hmm, i annonsen din står det at du selger den for 500 kroner. Er trekket veldig slitt? 
+     
+    Sendt fra min iPhone</div>
+                <div data-finnbox-date="1394786057000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-tMlrgFcEN-lwr6OVytfKR6PvzphOTF2oS0LMZpr8w-aq4iqD9_oGdz21ua4kchE8hj2GBFWWQqUqO4c9TnqFpNaDvS_buGalHqQm2l4qMPo" data-finnbox-message-id="tMlrgFcEN-lwr6OVytfKR6PvzphOTF2oS0LMZpr8w-aq4iqD9_oGdz21ua4kchE8hj2GBFWWQqUqO4c9TnqFpNaDvS_buGalHqQm2l4qMPo" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Trekket er litt slitt. Det var sølt kaffe på venstre armlene men det er vel det eneste. Du ser flekken på bilde. Det er mulig å bytte trekket på stolen om du har lyst på en annen farge.</div>
+                <div data-finnbox-date="1394786235000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-5XgEGpWF4x63bh-yZNDPv0wdMXNaOOTczCMnXl-_0lyiiVPq664jDdFfUBNZRK0KxqvO1WU0_0DuY9YRlaH3NxhNqb5-WCxgu2vCc-Uhgxg" data-finnbox-message-id="5XgEGpWF4x63bh-yZNDPv0wdMXNaOOTczCMnXl-_0lyiiVPq664jDdFfUBNZRK0KxqvO1WU0_0DuY9YRlaH3NxhNqb5-WCxgu2vCc-Uhgxg" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hva er addressen din? Vi kan vel bli enige om 550 kroner siden jeg leverer stolen til deg.</div>
+                <div data-finnbox-date="1394786574000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-tgYlByY8OU5mdVmtYkR1uHGNYSyM16-XhvkNPUuA6zHbtGE5amqNXpAXKVZ2k2w3kA9llqBe-CofpfaXuAp-fXr8JujkvQvbFeiHR7vksr8" data-finnbox-message-id="tgYlByY8OU5mdVmtYkR1uHGNYSyM16-XhvkNPUuA6zHbtGE5amqNXpAXKVZ2k2w3kA9llqBe-CofpfaXuAp-fXr8JujkvQvbFeiHR7vksr8" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Stine Gundersen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Greit. Mandag kan gå bra. Vet du sånn ca når det blir? Jeg bor i Depotgata 18 ikke langt unna Lillestrøm stasjon. 
+     
+    Sendt fra min iPhone</div>
+                <div data-finnbox-date="1394786614000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-MKX9VXnlbCHp0lwSgEQFxsEc_WKeOOzVa5LprmKQcyDcvTmo511UxAK13Id6my_BkidCBd_loargZ4iwNbGlumJqiF5h5h0EoGHXg2iby8c" data-finnbox-message-id="MKX9VXnlbCHp0lwSgEQFxsEc_WKeOOzVa5LprmKQcyDcvTmo511UxAK13Id6my_BkidCBd_loargZ4iwNbGlumJqiF5h5h0EoGHXg2iby8c" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Greit, da er vi enige! solgt!</div>
+                <div data-finnbox-date="1395231883000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="tgYlByY8OU5mdVmtYkR1uHGNYSyM16-XhvkNPUuA6zHbtGE5amqNXpAXKVZ2k2w3kA9llqBe-CofpfaXuAp-fXr8JujkvQvbFeiHR7vksr8" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="g5xT5-P9xG-rFaqL2ilhjdOZGIRbjeZ0e56LqWXGlO1QjrQMMghl-L-jdtIIo4h91rbnn1aAKv-FTEDFM79XdPaSFxHDt2Ejiv4xzvXbC8g" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1394789471000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Lise</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            
+                            Hvor gammel er den? Den ser litt godt brukt ut. :) Hilsen Lise</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Lise</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Lise</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            
+                            Hvor gammel er den? Den ser litt godt brukt ut. :) Hilsen Lise</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-g5xT5-P9xG-rFaqL2ilhjdOZGIRbjeZ0e56LqWXGlO1QjrQMMghl-L-jdtIIo4h91rbnn1aAKv-FTEDFM79XdPaSFxHDt2Ejiv4xzvXbC8g" data-finnbox-message-id="g5xT5-P9xG-rFaqL2ilhjdOZGIRbjeZ0e56LqWXGlO1QjrQMMghl-L-jdtIIo4h91rbnn1aAKv-FTEDFM79XdPaSFxHDt2Ejiv4xzvXbC8g" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Lise</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Hvor gammel er den? Den ser litt godt brukt ut. :) Hilsen Lise</div>
+                <div data-finnbox-date="1394789471000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="g5xT5-P9xG-rFaqL2ilhjdOZGIRbjeZ0e56LqWXGlO1QjrQMMghl-L-jdtIIo4h91rbnn1aAKv-FTEDFM79XdPaSFxHDt2Ejiv4xzvXbC8g" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="1b8ixFxy46Ryl9iXAHXodQJFlc1NRmQJ8LATevlRSxU1Yk80yhC3kY3VCK6xic5wY4qmV5KLARv9YozrJLGiD18X-MDYRMfOrVXX_nt_pKU" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1394789193000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Trond</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            
+                            Har ikke lyst til å betale noe for denne, men jeg kan godt komme å hente den gratis. Hilsen Trond</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Trond</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Trond</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            
+                            Har ikke lyst til å betale noe for denne, men jeg kan godt komme å hente den gratis. Hilsen Trond</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-1b8ixFxy46Ryl9iXAHXodQJFlc1NRmQJ8LATevlRSxU1Yk80yhC3kY3VCK6xic5wY4qmV5KLARv9YozrJLGiD18X-MDYRMfOrVXX_nt_pKU" data-finnbox-message-id="1b8ixFxy46Ryl9iXAHXodQJFlc1NRmQJ8LATevlRSxU1Yk80yhC3kY3VCK6xic5wY4qmV5KLARv9YozrJLGiD18X-MDYRMfOrVXX_nt_pKU" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Trond</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Har ikke lyst til å betale noe for denne, men jeg kan godt komme å hente den gratis. Hilsen Trond</div>
+                <div data-finnbox-date="1394789193000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="1b8ixFxy46Ryl9iXAHXodQJFlc1NRmQJ8LATevlRSxU1Yk80yhC3kY3VCK6xic5wY4qmV5KLARv9YozrJLGiD18X-MDYRMfOrVXX_nt_pKU" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="sT4cV8JO17wgTqYi00hdep2FzaP1ixbXCtQ3PTvLMSYebFO9g3QIISIAyA_3SB_DsL8_pCNJ034JMbUiEngzTWNzP1_HzTGUz_-fl9xvO6g" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1394789127000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Eva</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            
+                            Er den gul eller hvit? Hilsen Eva</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Eva</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Eva</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-1">1</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            
+                            Er den gul eller hvit? Hilsen Eva</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-sT4cV8JO17wgTqYi00hdep2FzaP1ixbXCtQ3PTvLMSYebFO9g3QIISIAyA_3SB_DsL8_pCNJ034JMbUiEngzTWNzP1_HzTGUz_-fl9xvO6g" data-finnbox-message-id="sT4cV8JO17wgTqYi00hdep2FzaP1ixbXCtQ3PTvLMSYebFO9g3QIISIAyA_3SB_DsL8_pCNJ034JMbUiEngzTWNzP1_HzTGUz_-fl9xvO6g" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Eva</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Er den gul eller hvit? Hilsen Eva</div>
+                <div data-finnbox-date="1394789127000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="sT4cV8JO17wgTqYi00hdep2FzaP1ixbXCtQ3PTvLMSYebFO9g3QIISIAyA_3SB_DsL8_pCNJ034JMbUiEngzTWNzP1_HzTGUz_-fl9xvO6g" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li><li data-finnbox-reply-to-message="ik7b0o8QyJUIsnRZe_xRkfq3hcX16gksNXj4UpOy8jO9Ec-HWLxd7NtAV1-kc0TkTqT7GQVDbP_u5sL7SkYOMo6tHAd1BF2zmoMtLczaSi8" data-finnbox-component="conversation" class="finnbox-conversation">
+        <div data-finnbox-element="conversationheader">
+            <div class="media man r-pbm r-pll">
+                <div class="img finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>                <div data-finnbox-element="arrow" class="img mts ptt pale">
+                        <div class="finnbox-conversation-open-hide icon-arrow_right"></div>
+                        <div class="finnbox-conversation-open-show icon-arrow_down hidden"></div>
+                    </div>
+                </div>
+                <div data-finnbox-date="1394786095000" data-finnbox-component="date" data-finnbox-element="conversationdate" class="imgExt r-phm r-ptm smalltext-lt768 pale finnbox-conversation-open-hide">en måned</div>
+                <a class="bd linkblock neutral" href="#">
+                    <div class="hide-lt768 pts mtt truncate">
+                        <span class="sharp largetext">Anders</span>
+                        <span class="pale plm prl largetext finnbox-conversation-open-hide finnbox-count-4">4</span>
+                        <span data-finnbox-element="conversationcontent" class="plm pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Jeg har noen andre som allerede har lyst til å betale 500 kroner så det går ikke.</span>
+                    </div>
+                    <div class="hide-ht768 truncate">
+                        <span class="sharp finnbox-conversation-open-hide">Anders</span>
+                        <span class="sharp finnbox-conversation-open-show largetext pvs mvt">Anders</span>
+                        <span class="pale plm finnbox-conversation-open-hide finnbox-count-4">4</span>
+                        <br class="finnbox-conversation-open-hide">
+                        <span data-finnbox-element="conversationcontent" class="pale finnbox-conversation-open-hide">
+                            <span class="icon-svar"></span>
+                            Jeg har noen andre som allerede har lyst til å betale 500 kroner så det går ikke.</span>
+                    </div>
+                </a>
+            </div>
+            <hr class="man mhm border-dk-gray opacity25 finnbox-conversation-open-show">
+        </div>
+        <div data-finnbox-element="messages" class="bg-pale-gray finnbox-conversation-open-show">
+            <div data-finnbox-element="showallmessages" class="hidden line negative ptm">
+                <a class="unit lastUnit blue pvm finnbox-profile-margin" href="#">
+                    Vis eldre meldinger <span data-finnbox-element="hiddenmessagescount"></span>
+                </a>
+            </div>
+            <ol class="man ptm">
+    <li id="finnbox-message-zsVFBKPgAv_-2N9hhF28eCxdqZ15rwE0Uhx4HR-OfjhHNYZQGMawrx3AaFM0C8ks-ARfhXMj9dvZq4MwG51XCezoaL1GdlkzG7MR15HOe78" data-finnbox-message-id="zsVFBKPgAv_-2N9hhF28eCxdqZ15rwE0Uhx4HR-OfjhHNYZQGMawrx3AaFM0C8ks-ARfhXMj9dvZq4MwG51XCezoaL1GdlkzG7MR15HOe78" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Anders</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Halla, har du fortsatt stolen eller? Hilsen Anders</div>
+                <div data-finnbox-date="1394785670000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-dxVlh2PjaX76iOXxgJlatraj_VeXozFpVZ0nkV7YoJ-NiYZVzNuMvIq5mOgmlQboj4TgGj77lu48HD3BZ0mPAYXyztc13Nl-_ssYxzHpCbI" data-finnbox-message-id="dxVlh2PjaX76iOXxgJlatraj_VeXozFpVZ0nkV7YoJ-NiYZVzNuMvIq5mOgmlQboj4TgGj77lu48HD3BZ0mPAYXyztc13Nl-_ssYxzHpCbI" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Ja, jeg har fortsatt stolen. Har du lyst til å kjøpe den?</div>
+                <div data-finnbox-date="1394785836000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-ik7b0o8QyJUIsnRZe_xRkfq3hcX16gksNXj4UpOy8jO9Ec-HWLxd7NtAV1-kc0TkTqT7GQVDbP_u5sL7SkYOMo6tHAd1BF2zmoMtLczaSi8" data-finnbox-message-id="ik7b0o8QyJUIsnRZe_xRkfq3hcX16gksNXj4UpOy8jO9Ec-HWLxd7NtAV1-kc0TkTqT7GQVDbP_u5sL7SkYOMo6tHAd1BF2zmoMtLczaSi8" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Anders Olsen Sandvik</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg har sett noen andre stoler så jeg er bare interessert om jeg kan får den for 300 kroner.</div>
+                <div data-finnbox-date="1394785917000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li><li id="finnbox-message-tuKJdMOQW-OFoAz2EkxIyXFhH-WW3ZyfxJy1QosBFFEjNDCdV1JXlYEiyy_R_-EFF2Q1XpTIAKIvIEzGQ3qauubANIXdJOVe6AizUHAjXDw" data-finnbox-message-id="tuKJdMOQW-OFoAz2EkxIyXFhH-WW3ZyfxJy1QosBFFEjNDCdV1JXlYEiyy_R_-EFF2Q1XpTIAKIvIEzGQ3qauubANIXdJOVe6AizUHAjXDw" data-finnbox-element="message" class="bg-pale-gray r-pvm r-pll">
+        <div class="line">
+            <div class="unit finnbox-profile-container">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="strong">Espen Iversen</div>
+                <div class="sharp prm" data-finnbox-element="messagecontent">Jeg har noen andre som allerede har lyst til å betale 500 kroner så det går ikke.</div>
+                <div data-finnbox-date="1394786095000" data-finnbox-component="date" class="smalltext neutral">en måned</div>
+            </div>
+        </div>
+    </li>        </ol>
+        </div>
+
+            <div class="finnbox-conversation-open-show"><div data-finnbox-reply-to-message="ik7b0o8QyJUIsnRZe_xRkfq3hcX16gksNXj4UpOy8jO9Ec-HWLxd7NtAV1-kc0TkTqT7GQVDbP_u5sL7SkYOMo6tHAd1BF2zmoMtLczaSi8" data-finnbox-component="reply">
+        <div data-finnbox-element="replyerror" class="hidden leftify finnbox-profile-margin negative">
+            <div class="icon-varsel2">
+                Usjda, vi klarte ikke å sende meldingen din. Vennligst prøv igjen senere.
+            </div>
+        </div>
+        <div class="r-pll hide-gt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>    </div>
+        <div class="line r-phl r-pvm bg-pale-gray">
+            <div class="unit finnbox-profile-container hide-lt768">
+    <div style="width:32px" data-finnbox-element="profile" class="man finnbox-profile-image hidden">&nbsp;</div>        </div>
+            <div class="unit lastUnit">
+                <div class="line finnbox-replymessage"><textarea data-finnbox-element="replymessage" rows="3"></textarea></div>
+                <div class="line finnbox-replybutton pbm pts">
+                    <button data-finnbox-element="replybutton" class="mhn" disabled="disabled">Send svar</button>
+                    <span data-finnbox-element="replyprogress" class="hidden pll">Sender ...</span>
+                </div>
+            </div>
+        </div>
+    </div></div>
+    </li></ol>
+</body>
